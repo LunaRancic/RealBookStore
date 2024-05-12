@@ -35,6 +35,7 @@ public class GenreRepository {
                 genreList.add(new Genre(rs.getInt(1), rs.getString(2)));
             }
         } catch (SQLException e) {
+            LOG.error("Neuspesno dohvatanja zanrova");
             e.printStackTrace();
         }
         return genreList;
@@ -50,6 +51,7 @@ public class GenreRepository {
                 genreList.add(new Genre(rs.getInt(1), rs.getString(2)));
             }
         } catch (SQLException e) {
+            LOG.warn("Neuspesno dohvatanje zanra za knjigu (id): " + bookId);
             e.printStackTrace();
         }
         return genreList;

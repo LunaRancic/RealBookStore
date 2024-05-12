@@ -36,8 +36,10 @@ public class BookRepository {
                 bookList.add(book);
             }
         } catch (SQLException e) {
+            LOG.error("Dohvatanje svih knjiga iz baze");
             e.printStackTrace();
         }
+
         return bookList;
     }
 
@@ -55,6 +57,7 @@ public class BookRepository {
                 bookList.add(createBookFromResultSet(rs));
             }
         }
+        AuditLogger.getAuditLogger(BookRepository.class).audit("Uneto: " + searchTerm);
         return bookList;
     }
 
@@ -67,6 +70,7 @@ public class BookRepository {
                 return createBookFromResultSet(rs);
             }
         } catch (SQLException e) {
+            LOG.warn("Neuspesno dohvatanje knjige iz baze");
             e.printStackTrace();
         }
         return null;
@@ -94,13 +98,16 @@ public class BookRepository {
                         statement2.setInt(2, genre.getId());
                         statement2.executeUpdate();
                     } catch (SQLException e) {
+                        LOG.error("Neuspesno dodavanje zanra u bazu");
                         e.printStackTrace();
                     }
                 });
             }
         } catch (SQLException e) {
+            LOG.error("Neuspesno dodavanje knjige u bazu");
             e.printStackTrace();
         }
+        AuditLogger.getAuditLogger(BookRepository.class).audit("Kreirana knjiga: " + book.toString());
         return id;
     }
 
@@ -117,8 +124,11 @@ public class BookRepository {
             statement.executeUpdate(query3);
             statement.executeUpdate(query4);
         } catch (SQLException e) {
+            LOG.error("Neuspesno otklanjanje knjige iz baze");
             e.printStackTrace();
         }
+        AuditLogger.getAuditLogger(BookRepository.class).audit("Obrisana knjiga (id): " + bookId);
+
     }
 
     private Book createBookFromResultSet(ResultSet rs) throws SQLException {

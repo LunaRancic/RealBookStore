@@ -35,6 +35,9 @@ public class RatingRepository {
                     preparedStatement.setInt(2, rating.getBookId());
                     preparedStatement.setInt(3, rating.getUserId());
                     preparedStatement.executeUpdate();
+                } catch (SQLException e) {
+                    LOG.warn("Neuspesno dodavanje/azuriranje ocene: " + rating.toString());
+                    e.printStackTrace();
                 }
             } else {
                 try (PreparedStatement preparedStatement = connection.prepareStatement(query3)) {
@@ -45,6 +48,7 @@ public class RatingRepository {
                 }
             }
         } catch (SQLException e) {
+            LOG.warn("Neuspesno dohvatanje ocene: " + rating.toString());
             e.printStackTrace();
         }
     }
@@ -59,6 +63,7 @@ public class RatingRepository {
                 ratingList.add(new Rating(rs.getInt(1), rs.getInt(2), rs.getInt(3)));
             }
         } catch (SQLException e) {
+            LOG.warn("Neuspesno dohvatanje ocene za knjigu (id): " + bookId);
             e.printStackTrace();
         }
         return ratingList;

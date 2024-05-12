@@ -33,6 +33,7 @@ public class PersonRepository {
                 personList.add(createPersonFromResultSet(rs));
             }
         } catch (SQLException e) {
+            LOG.warn("Neuspesno dohvatanje svih korisnika");
             e.printStackTrace();
         }
         return personList;
@@ -48,7 +49,11 @@ public class PersonRepository {
             while (rs.next()) {
                 personList.add(createPersonFromResultSet(rs));
             }
+        } catch (SQLException e) {
+            LOG.warn("Neuspesna pretraga korisnika (term): " + searchTerm);
+            e.printStackTrace();
         }
+        AuditLogger.getAuditLogger(PersonRepository.class).audit("Trazeni korisnik: " + searchTerm);
         return personList;
     }
 
@@ -61,6 +66,7 @@ public class PersonRepository {
                 return createPersonFromResultSet(rs);
             }
         } catch (SQLException e) {
+            LOG.warn("Neuspesno dohvatanje korisnika: " + personId);
             e.printStackTrace();
         }
 
@@ -74,8 +80,10 @@ public class PersonRepository {
         ) {
             statement.executeUpdate(query);
         } catch (SQLException e) {
+            LOG.warn("Neuspesno otklanjanje korisnika (id): " + personId);
             e.printStackTrace();
         }
+        AuditLogger.getAuditLogger(PersonRepository.class).audit("Otklanjanje korisnika (id): " + personId);
     }
 
     private Person createPersonFromResultSet(ResultSet rs) throws SQLException {
@@ -99,7 +107,9 @@ public class PersonRepository {
             statement.setString(2, email);
             statement.executeUpdate();
         } catch (SQLException e) {
+            LOG.warn("Neuspesno azuriranje korisnika: " + personUpdate.toString());
             e.printStackTrace();
         }
+        AuditLogger.getAuditLogger(PersonRepository.class).audit("Azuriranje korisnika: " + personUpdate.toString());
     }
 }
